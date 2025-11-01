@@ -1,35 +1,21 @@
-# OS Files
-.DS_Store
-Thumbs.db
-desktop.ini
+.aider*
+node_modules
 
-# Editor Files
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+vendor/
+.bundle/
+
+# Editor files
+*.swp
+*~
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
-# Build Outputs
-dist/
-build/
-.next/
-out/
-public/
-.cache/
-
-# Dependencies
-node_modules/
-.pnp/
-.pnp.js
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Temporary Files
-*.tmp
-*.temp
-.temp/
+# OS files
+.DS_Store
+Thumbs.db
