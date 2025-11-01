@@ -1,118 +1,57 @@
-# Another Tech Blog - Backup Archive
+# justanothertech-blog — Official source
 
-**Backup Date:** November 1, 2025
-**Original Platform:** Wix
-**Domain:** justanothertech.blog
-**Owner:** Jack Davis (JackD)
+This repository is the canonical source for "Another Tech Blog" by Jack Davis.
+The site is built with Jekyll (using the Minimal Mistakes remote theme) and is published at: https://blog.jackdavis.net
 
-## Backup Contents
+## About
 
-This archive contains a complete backup of the "Another Tech Blog" content from Wix, prior to migration to GitHub Pages. All content has been successfully extracted, converted to markdown, and all images have been downloaded locally.
+This repository contains the content and site configuration for the blog. Posts are authored as Jekyll markdown files (in `_posts` or `content/`) and rendered by GitHub Pages using the `mmistakes/minimal-mistakes` theme.
 
-### Directory Structure
+> Note: Some content was migrated from a previous platform and converted into Jekyll-friendly Markdown during migration.
 
-```
-blog-backup/
-├── content/
-│   ├── custom-reporting-intune.md              # Markdown version (GitHub/Jekyll-ready)
-│   └── images/                                 # All post images (downloaded)
-│       ├── solution-architecture.jpg
-│       ├── azure-function-requirements.png
-│       ├── iam-permissions.png
-│       ├── log-analytics-workspace.png
-│       ├── device-id-parameter.png
-│       └── final-report.gif
-├── .gitignore                                  # Git ignore file
-└── README.md                                   # This file
-```
+## Quick start — preview locally
 
-### Blog Post Inventory
+Prerequisites:
+- Ruby (2.7+ recommended)
+- Bundler
 
-#### 1. Custom Reporting on Windows Devices via Microsoft Intune
-- **Published:** December 30, 2021
-- **Updated:** October 5, 2023
-- **Reading Time:** 7 minutes
-- **Categories:** Microsoft Intune, Azure, PowerShell, Windows, Reporting
-- **GitHub Repo:** https://github.com/JackDDavis/EnhancedLogging
+Steps:
 
-**Summary:** Comprehensive guide to extending Microsoft Intune's reporting capabilities using PowerShell, Azure Functions, Log Analytics, and custom scheduled tasks for Windows endpoints.
+1. Clone the repository:
 
-### Images Downloaded
+   git clone https://github.com/JackDDavis/justanothertech-blog.git
+   cd justanothertech-blog
 
-All images have been successfully downloaded from Wix CDN and stored locally:
+2. Install dependencies:
 
-1. **Solution Architecture Flow** (`solution-architecture.jpg`)
-   - Size: 62.6 KB
-   - Type: Architecture diagram
-   - Status: ✅ Downloaded
+   gem install bundler
+   bundle install
 
-2. **Requirements.psd1 Configuration** (`azure-function-requirements.png`)
-   - Size: 2.6 KB
-   - Type: Screenshot
-   - Status: ✅ Downloaded
+3. Serve locally:
 
-3. **IAM Permissions** (`iam-permissions.png`)
-   - Size: 830 bytes
-   - Type: Screenshot
-   - Status: ✅ Downloaded
+   bundle exec jekyll serve --livereload
 
-4. **Log Analytics Custom Logs** (`log-analytics-workspace.png`)
-   - Size: 5.4 KB
-   - Type: Screenshot
-   - Status: ✅ Downloaded
+Visit http://127.0.0.1:4000 to preview the site locally.
 
-5. **DeviceID Parameter** (`device-id-parameter.png`)
-   - Size: 2.0 KB
-   - Type: Screenshot
-   - Status: ✅ Downloaded
+## Contributing
 
-6. **Reporting Demo** (`final-report.gif`)
-   - Size: 5.8 KB
-   - Type: Animation
-   - Status: ✅ Downloaded
+- Posts: Add new posts to `_posts/` (or `content/` if you prefer) with front matter including `title`, `date`, `categories`, and `tags`.
+- Images and assets: place under `assets/` and reference with absolute paths or site variables.
 
-### Backup Status
+Pull requests are welcome for content fixes, new posts, and small site improvements. For larger changes, please open an issue first to discuss.
 
-✅ **Backup Complete** - All content and images have been successfully extracted and converted.
+## Deployment
 
-- ✅ Blog post extracted and converted to markdown
-- ✅ All 6 images downloaded locally
-- ✅ Frontmatter added with proper metadata
-- ✅ Code blocks properly formatted
-- ✅ Links to external resources preserved
-- ✅ GitHub repository references maintained
+This repository is configured for GitHub Pages. The `CNAME` file points the site to the custom domain `blog.jackdavis.net`. Site builds use the remote theme `mmistakes/minimal-mistakes@4.24.0` defined in `_config.yml`.
 
-### Migration Notes
+If you need CI-based builds or other deployment workflows, consider adding a GitHub Actions workflow to build and validate the site on push.
 
-- **Wix Renewal Date:** December 30, 2025
-- **Target Platform:** GitHub Pages with Jekyll (or Hugo, Next.js, etc.)
-- **Completed Steps:**
-  1. ✅ Downloaded all images from Wix CDN
-  2. ✅ Converted HTML content to Markdown
-  3. ✅ Created GitHub-ready file structure
-  4. ✅ Added .gitignore file
+## License
 
-- **Next Steps:**
-  1. Create GitHub repository
-  2. Push content to repository
-  3. Choose static site generator (Jekyll/Hugo/Next.js)
-  4. Select and configure theme
-  5. Test site locally
-  6. Deploy to GitHub Pages
-  7. Configure custom domain DNS
-  8. Verify all links and images work correctly
+Content is authored by Jack Davis. Check individual files for licensing details or contact the repository owner for reuse permission.
 
-### Author Information
+## Contact
 
-- **Name:** Jack Davis
-- **Email:** cloudops@jackdavis.net
-- **GitHub:** https://github.com/JackDDavis
-- **LinkedIn:** https://www.linkedin.com/in/techprojackd
+Jack Davis — cloudops@jackdavis.net
 
-### License & Usage
-
-This is a personal blog backup. All content is the intellectual property of Jack Davis.
-
----
-
-*Backup created as part of migration from Wix to GitHub Pages.*
+GitHub: https://github.com/JackDDavis
