@@ -322,7 +322,6 @@ Along with the necessary prerequisites, I've included several recommendations to
 - Retrieve **Azure Monitor upload script** (`Upload-AzMonitorLog`) from PowerShell Gallery (*Logging requirement*): https://www.powershellgallery.com/packages/Upload-AzMonitorLog/
 - Package **Azure Monitor upload script** as [PowerShell script module](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-powershell#dependency-management) for later use with Azure Function App (*Web App Service requirement*)
 
-
 ## Resources
 
 - [GitHub Repository](https://github.com/JackDDavis/EnhancedLogging)
