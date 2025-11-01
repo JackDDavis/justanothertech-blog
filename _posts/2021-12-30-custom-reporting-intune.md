@@ -41,53 +41,14 @@ In short, the described process works by triggering a scheduled task on Windows 
 
 ![Solution Architecture Flow](/assets/images/solution-architecture.jpg)
 
-This solution leverages several Azure-based technologies for handling data, securing credentials and communicating with client endpoints. Much of the added complexity is to enhance security. Before proceeding, ensure your organization has the necessary licensing and proper RBAC for full integration. See the 'Prerequisites & Recommendations' section for included technologies. Solution files can be found on my [GitHub](https://github.com/JackDDavis/EnhancedLogging). Please see the various Microsoft Docs referenced throughout if there are questions about setup of individual Azure services.
+This solution leverages several Azure-based technologies for handling data, securing credentials and communicating with client endpoints. Much of the added complexity is to enhance security. Before proceeding, ensure your organization has the necessary licensing and proper RBAC for full integration. See the [Appendix](#appendix-prerequisites--recommendations) section for included technologies. Solution files can be found on my [GitHub](https://github.com/JackDDavis/EnhancedLogging). Please see the various Microsoft Docs referenced throughout if there are questions about setup of individual Azure services.
 
 **Please Note:** I am not a licensing specialist and will not discuss licensing throughout this post.
 
-## Prerequisites & Recommendations
-
-Along with the necessary prerequisites, I've included several recommendations to make for a more secure & complete solution.
-
-### Microsoft Intune - Solution Deployment & Configuration
-
-- Distribute certificate to client endpoints: PFX certificate will be used to securely authenticate to various Azure services via PowerShell (*Security recommendation*)
-- [Enable Intune diagnostics](https://docs.microsoft.com/en-us/mem/intune/fundamentals/intune-diagnostics) reporting from Tenant Administration: The workspace used with Intune diagnostics reporting can also be used for custom logging by solution (*Logging requirement*)
-- Assign appropriate RBAC for accessing Azure Monitor Workbooks (*Reporting requirement*)
-- Assign appropriate RBAC for profile/script deployment by administrators (*Configuration requirement*)
-
-### Azure Functions (Web App Service) – Client Endpoint request handling
-
-- [Create a new Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function) app with PowerShell Core as its Runtime stack (*Logging requirement*)
-- Enable TLS for [HTTPS ONLY](https://docs.microsoft.com/en-us/azure/app-service/configure-ssl-bindings) traffic (*Security recommendation*)
-- Upload a trusted certificate to authenticate requests to the web service (*Security recommendation*)
-
-### Log Analytics - Logging Output
-
-- If workspace not already shared with Intune Diagnostics, [create new Log Analytics workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace) (*Logging requirement*)
-- Assign appropriate RBAC to data professional(s) for creation of Azure Monitor Workbooks (*Reporting requirement*)
-
-### Service Principal Account - Identity used in accessing Azure resources
-
-- Create Azure AD application registration to use as [Service Principal (SP) account](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal) (*Security Recommendation*)
-- Grant [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
-
-### Azure Storage - Solution Package storage location
-
-- Create container for use with Solution Package blob (*Configuration requirement*)
-- Optionally, create a separate container to be used for automatic upload of failure logs (*Configuration recommendation*)
-- Grant access to Service Principal Account via [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
-
-### Azure KeyVault - Secret Management
-
-- Grant access to Service Principal via [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
-
-### PowerShell - Solution Package Language
-
-- Retrieve **Azure Monitor upload script** (`Upload-AzMonitorLog`) from PowerShell Gallery (*Logging requirement*): https://www.powershellgallery.com/packages/Upload-AzMonitorLog/
-- Package **Azure Monitor upload script** as [PowerShell script module](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-powershell#dependency-management) for later use with Azure Function App (*Web App Service requirement*)
-
 ## Implementation
+
+> **Note:** Prerequisites and setup requirements are listed in the [Appendix](#appendix-prerequisites--recommendations) section below. If you're ready to get started, you can skip ahead to the implementation steps.
+
 
 Now that we've gotten that out of the way, Let's jump into it!
 
@@ -317,6 +278,50 @@ WinAppInv_CL
 ---
 
 Retrieve full solution files from my GitHub repository. Contribute via the Community Branch: https://github.com/JackDDavis/EnhancedLogging
+
+
+## Appendix: Prerequisites & Recommendations {#appendix-prerequisites--recommendations}
+
+Along with the necessary prerequisites, I've included several recommendations to make for a more secure & complete solution.
+
+### Microsoft Intune - Solution Deployment & Configuration
+
+- Distribute certificate to client endpoints: PFX certificate will be used to securely authenticate to various Azure services via PowerShell (*Security recommendation*)
+- [Enable Intune diagnostics](https://docs.microsoft.com/en-us/mem/intune/fundamentals/intune-diagnostics) reporting from Tenant Administration: The workspace used with Intune diagnostics reporting can also be used for custom logging by solution (*Logging requirement*)
+- Assign appropriate RBAC for accessing Azure Monitor Workbooks (*Reporting requirement*)
+- Assign appropriate RBAC for profile/script deployment by administrators (*Configuration requirement*)
+
+### Azure Functions (Web App Service) – Client Endpoint request handling
+
+- [Create a new Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function) app with PowerShell Core as its Runtime stack (*Logging requirement*)
+- Enable TLS for [HTTPS ONLY](https://docs.microsoft.com/en-us/azure/app-service/configure-ssl-bindings) traffic (*Security recommendation*)
+- Upload a trusted certificate to authenticate requests to the web service (*Security recommendation*)
+
+### Log Analytics - Logging Output
+
+- If workspace not already shared with Intune Diagnostics, [create new Log Analytics workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace) (*Logging requirement*)
+- Assign appropriate RBAC to data professional(s) for creation of Azure Monitor Workbooks (*Reporting requirement*)
+
+### Service Principal Account - Identity used in accessing Azure resources
+
+- Create Azure AD application registration to use as [Service Principal (SP) account](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal) (*Security Recommendation*)
+- Grant [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
+
+### Azure Storage - Solution Package storage location
+
+- Create container for use with Solution Package blob (*Configuration requirement*)
+- Optionally, create a separate container to be used for automatic upload of failure logs (*Configuration recommendation*)
+- Grant access to Service Principal Account via [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
+
+### Azure KeyVault - Secret Management
+
+- Grant access to Service Principal via [Access Control](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal) (IAM)
+
+### PowerShell - Solution Package Language
+
+- Retrieve **Azure Monitor upload script** (`Upload-AzMonitorLog`) from PowerShell Gallery (*Logging requirement*): https://www.powershellgallery.com/packages/Upload-AzMonitorLog/
+- Package **Azure Monitor upload script** as [PowerShell script module](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-powershell#dependency-management) for later use with Azure Function App (*Web App Service requirement*)
+
 
 ## Resources
 
