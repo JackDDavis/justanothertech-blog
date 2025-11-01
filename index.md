@@ -1,6 +1,4 @@
 ---
 layout: home
-title: Home
+author_profile: true
 ---
-
-Welcome to my technical blog. I write about cloud infrastructure, automation, and enterprise IT solutions.

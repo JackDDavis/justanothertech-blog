@@ -1,17 +1,21 @@
 ---
 title: "Custom Reporting on Windows Devices via Microsoft Intune"
-author: "JackD"
-date: "2021-12-30"
-updated: "2023-10-05"
-description: "A PowerShell-driven solution to extend logging capabilities against Windows endpoints in Microsoft Intune"
-tags: ["Microsoft Intune", "Azure", "PowerShell", "Log Analytics", "Endpoint Manager"]
+date: 2021-12-30
+last_modified_at: 2023-10-05
+categories:
+  - Azure
+  - Intune
+tags:
+  - Microsoft Intune
+  - Azure
+  - PowerShell
+  - Log Analytics
+  - Endpoint Manager
+excerpt: "A PowerShell-driven solution to extend logging capabilities against Windows endpoints in Microsoft Intune"
+classes: wide
+header:
+  teaser: /assets/images/solution-architecture.jpg
 ---
-
-# Custom Reporting on Windows Devices via Microsoft Intune
-
-**Published:** December 30, 2021
-**Updated:** October 5, 2023
-**Author:** Jack D.
 
 ## Challenge
 
