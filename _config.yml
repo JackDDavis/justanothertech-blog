@@ -1,0 +1,29 @@
+# Site settings
+title: Jack Davis
+email: 24422671+JackDDavis@users.noreply.github.com
+description: Technical writing and insights
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://blog.jackdavis.net" # the base hostname & protocol for your site
+github_username: JackDDavis
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Minima theme settings
+minima:
+  skin: auto
+  social_links:
+    - { platform: github, user_url: "https://github.com/JackDDavis" }
+
+# Exclude from processing
+exclude:
+  - .gitignore
+  - README.md
+  - DEPLOYMENT-GUIDE.md
+  - TODO.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
