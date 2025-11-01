@@ -58,11 +58,11 @@ To securely authenticate to Azure resources during initialization & check-in, we
 
 ### Azure Storage
 
-We'll [upload the Solution Package to blob storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal). You will need to update [Log Task script](https://github.com/JackDDavis/EnhancedLogging/blob/main/Log-Task.ps1) file prior to uploading. Be sure to [generate SAS token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview). Define token expiration and provide READ permissions to blob. Copy this SAS token for later use.
+We'll [upload the Solution Package to blob storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal). You will need to update [Log Task script](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/SolutionPackage/Task_TriggerLogging.ps1) file prior to uploading. Be sure to [generate SAS token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview). Define token expiration and provide READ permissions to blob. Copy this SAS token for later use.
 
 ### Azure Key Vault
 
-[Generate a new secret](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-portal) in Key Vault and paste Azure Blob Storage SAS token as its value. This secret is to be called in our [Initialization script](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging.ps1). Copy name of secret to use in `$kvSecret` variable.
+[Generate a new secret](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-portal) in Key Vault and paste Azure Blob Storage SAS token as its value. This secret is to be called in our [Initialization script](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/WinLogging.ps1). Copy name of secret to use in `$kvSecret` variable.
 
 See **Appendix** for details on the defined variables
 
@@ -83,7 +83,7 @@ Now this is where the action happens! Create a new function in your Azure Functi
 
 5. Navigate to **Function App > [Function Name]** > **Developer** > **Code + Test**.
 
-6. Update Azure Function app Body to begin accepting requests from endpoints ([GitHub](https://github.com/JackDDavis/EnhancedLogging/blob/main/FunctionApp.ps1)). Do not remove namespace or bindings.
+6. Update Azure Function app Body to begin accepting requests from endpoints ([GitHub](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/AzFunc_Post-Logs.ps1)). Do not remove namespace or bindings.
 
 ```powershell
 $ltn = $Request.Query.Name
@@ -112,7 +112,7 @@ if ($ltn) {
 
 ### Initialization Script
 
-There are three parts to the [initialization script](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging.ps1) – module installation, solution retrieval, and scheduled task creation. First, we install the necessary PowerShell modules needed on clients. For our solution, we'll need 3 components from Az modules. These include Resources, Storage, and KeyVault.
+There are three parts to the [initialization script](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/WinLogging.ps1) – module installation, solution retrieval, and scheduled task creation. First, we install the necessary PowerShell modules needed on clients. For our solution, we'll need 3 components from Az modules. These include Resources, Storage, and KeyVault.
 
 ```powershell
 $requiredModules = "Az.Accounts", "Az.Storage", "Az.Keyvault"
@@ -151,7 +151,7 @@ Connect-AzAccount @connectArgs -ServicePrincipal -Verbose -ErrorAction Stop
 $kvSecret = Get-AzKeyVaultSecret -VaultName $kv -Name $kvSecretName -AsPlainText
 ```
 
-Next, **Az.Storage** is used for downloading the [Solution Package](https://github.com/JackDDavis/EnhancedLogging/blob/main/Solution-Package.zip) from Azure blob storage. Once this is complete, the content is extracted from zip.
+Next, **Az.Storage** is used for downloading the [Solution Package](https://github.com/JackDDavis/EnhancedLogging/tree/main/WinLogging/SolutionPackage) from Azure blob storage. Once this is complete, the content is extracted from zip.
 
 ```powershell
 if (-not(test-path -Path "$PSScriptRoot\$azBlob")) {
@@ -164,7 +164,7 @@ if (-not(test-path -Path "$PSScriptRoot\$azBlob")) {
 }
 ```
 
-Lastly as part of the [initialization](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging.ps1), we create the scheduled task (**Log Task**).
+Lastly as part of the [initialization](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/WinLogging.ps1), we create the scheduled task (**Log Task**).
 
 ```powershell
 $actions = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument "$schTskLocation\$fileName\$schTsk"
@@ -176,7 +176,7 @@ Write-Verbose "Schedule Task '$fileName' is being registered" -Verbose
 Register-ScheduledTask $fileName -InputObject $task
 ```
 
-See [variables.md](https://github.com/JackDDavis/EnhancedLogging/blob/main/variables.md) on GitHub for additional detail on variables used throughout solution.
+See [variables.md](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/variables.md) on GitHub for additional detail on variables used throughout solution.
 
 ### Definition Files
 
@@ -213,7 +213,7 @@ $uploadlag = 'WinAppInv'
 
 ### Log Task
 
-The [Log Task](https://github.com/JackDDavis/EnhancedLogging/blob/main/Log-Task.ps1) will start similarly to the initialization script, connecting to Azure using our Service Principal account. We then inventory existing definition files.
+The [Log Task](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/SolutionPackage/Task_TriggerLogging.ps1) will start similarly to the initialization script, connecting to Azure using our Service Principal account. We then inventory existing definition files.
 
 ```powershell
 $uploadScripts = Get-ChildItem -Path $PSScriptRoot | Where-Object {$_.Name -like "Def-*"}
@@ -235,7 +235,7 @@ foreach ($log in $allLogs) {
 
 ### Deploying solution with Microsoft Intune
 
-[Create & assign](https://docs.microsoft.com/en-us/mem/intune/apps/intune-management-extension) a new PowerShell script policy. Under Script settings, leave 'Run this script using the logged on credentials' set to default to ensure this runs as System. Then, upload the Initialization script ([WinLogging.ps1](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging.ps1)). Lastly, set appropriate Scope as defined by your organization and target devices.
+[Create & assign](https://docs.microsoft.com/en-us/mem/intune/apps/intune-management-extension) a new PowerShell script policy. Under Script settings, leave 'Run this script using the logged on credentials' set to default to ensure this runs as System. Then, upload the Initialization script ([WinLogging.ps1](https://github.com/JackDDavis/EnhancedLogging/blob/main/WinLogging/WinLogging.ps1)). Lastly, set appropriate Scope as defined by your organization and target devices.
 
 ### Log Analytics
 
