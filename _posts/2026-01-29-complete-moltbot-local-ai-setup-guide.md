@@ -210,13 +210,13 @@ If you're considering running local AI: yes, it works. Yes, you'll hit weird con
 
 ## What's Next
 
-Now that the foundation is working, there are a few things I'm planning to build on top of it:
+Now that the foundation is working, I'm cautiously optimistic about where this could go. A few things I'm hoping to try:
 
-**Tax season.** It's coming up, and I've got years of receipts, statements, and documents scattered across folders. This is exactly the kind of task I want an AI helping with - categorizing, summarizing, flagging deductions - but absolutely not something I want leaving my network. The local setup makes this possible without compromise.
+**Tax season.** It's coming up, and I've got years of receipts, statements, and documents scattered across folders. This is exactly the kind of task I *want* an AI helping with - categorizing, summarizing, flagging deductions - but absolutely not something I want leaving my network. Whether a 30B local model can actually handle this well remains to be seen, but the setup at least makes it possible to try without compromise.
 
-**Connectors.** Moltbot supports a growing list of integrations - calendar, email, file systems, and more. I haven't wired those up yet, but the gateway architecture means I can add them incrementally without re-doing the core setup. The goal is a local assistant that can actually *do* things across my personal infrastructure, not just answer questions.
+**Connectors.** Moltbot supports a growing list of integrations - calendar, email, file systems, and more. I haven't wired those up yet, but the gateway architecture means I can add them incrementally without re-doing the core setup. The goal is a local assistant that can actually *do* things across my personal infrastructure, not just answer questions. We'll see how much of that vision actually materializes.
 
-**Better models.** The 30B parameter model is solid for now, but local inference keeps improving. As new models drop that fit my hardware, swapping them in is just a config change.
+**Better models.** The 30B parameter model is solid for now, but local inference keeps improving. As new models drop that fit my hardware, swapping them in is just a config change. I'm hopeful that capability will keep climbing.
 
 If you want to try this yourself, the project lives at [github.com/moltbot/moltbot](https://github.com/moltbot/moltbot). The docs have improved since I set this up - hopefully you'll hit fewer walls than I did.
 
