@@ -208,6 +208,20 @@ If you're considering running local AI: yes, it works. Yes, you'll hit weird con
 
 ---
 
+## What's Next
+
+Now that the foundation is working, there are a few things I'm planning to build on top of it:
+
+**Tax season.** It's coming up, and I've got years of receipts, statements, and documents scattered across folders. This is exactly the kind of task I want an AI helping with - categorizing, summarizing, flagging deductions - but absolutely not something I want leaving my network. The local setup makes this possible without compromise.
+
+**Connectors.** Moltbot supports a growing list of integrations - calendar, email, file systems, and more. I haven't wired those up yet, but the gateway architecture means I can add them incrementally without re-doing the core setup. The goal is a local assistant that can actually *do* things across my personal infrastructure, not just answer questions.
+
+**Better models.** The 30B parameter model is solid for now, but local inference keeps improving. As new models drop that fit my hardware, swapping them in is just a config change.
+
+If you want to try this yourself, the project lives at [github.com/moltbot/moltbot](https://github.com/moltbot/moltbot). The docs have improved since I set this up - hopefully you'll hit fewer walls than I did.
+
+---
+
 *Technical details: Moltbot 2026.1.27-beta, Ollama 0.5.x, Qwen 30B model, Ubuntu server, Windows client. Full configuration snippets below.*
 
 ---
