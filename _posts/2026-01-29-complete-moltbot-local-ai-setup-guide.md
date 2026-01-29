@@ -1,5 +1,5 @@
 ---
-title: "I Tried the Viral Clawdbot â€” Here's a Privacy-First Local Setup"
+title: "I Tried the Viral Clawdbot - Here's a Privacy-First Local Setup"
 date: 2026-01-29
 categories:
   - AI
@@ -11,27 +11,27 @@ tags:
   - Privacy
   - Windows
   - Linux
-excerpt: "The setup friction was realâ€”five distinct problems across two machinesâ€”but they're all solvable, and once solved, they tend to stay solved."
+excerpt: "The setup friction was real - five distinct problems across two machines - but they're all solvable, and once solved, they tend to stay solved."
 classes: wide
 ---
 
-If you've been online lately, you've probably seen **Clawdbot** popping up everywhereâ€”this quirky little "agent that actually does things." Then, almost immediately, it was renamed (it's **Moltbot** now).
+If you've been online lately, you've probably seen **Clawdbot** popping up everywhere - this quirky little "agent that actually does things." Then, almost immediately, it was renamed (it's **Moltbot** now).
 
-The hype is entertainingâ€”but what pulled me in was the *architecture*. Moltbot is built around a **local gateway**: something you run yourself that bridges messages, tools, and an agent runtime. That's a fundamentally different direction than "yet another chatbot tab."
+The hype is entertaining - but what pulled me in was the *architecture*. Moltbot is built around a **local gateway**: something you run yourself that bridges messages, tools, and an agent runtime. That's a fundamentally different direction than "yet another chatbot tab."
 
-And here's my real motivation: I want to use AI for the personal stuff that actually mattersâ€”home admin, family logistics, finances, notes, the boring-but-sensitive life tasks. Those are also the exact categories I'm least comfortable sending to AI Labs by default. I'm not trying to replace frontier AI agents for everything. I *am* trying to build a setup where the **privacy-sensitive lane stays on my network**.
+And here's my real motivation: I want to use AI for the personal stuff that actually matters - home admin, family logistics, finances, notes, the boring-but-sensitive life tasks. Those are also the exact categories I'm least comfortable sending to AI Labs by default. I'm not trying to replace frontier AI agents for everything. I *am* trying to build a setup where the **privacy-sensitive lane stays on my network**.
 
-Microâ€‘truth: local isn't a flex hereâ€”it's a boundary.
+Micro-truth: local isn't a flex here - it's a boundary.
 
-That's where the hardware changes the story. (Ubuntu on a **North XL** build: **RTX 5090**, **Ryzen 9 9950X**, **96GB RAM**, **990 Pro NVMe** storage â€” 2TB + 4TB.) It's enough horsepower that local inference feels like infrastructureâ€”meaning I can keep the private stuff on-prem *and* still have it run like a real assistant.
+That's where the hardware changes the story. (Ubuntu on a **North XL** build: **RTX 5090**, **Ryzen 9 9950X**, **96GB RAM**, **990 Pro NVMe** storage - 2TB + 4TB.) It's enough horsepower that local inference feels like infrastructure - meaning I can keep the private stuff on-prem *and* still have it run like a real assistant.
 
 The promise was simple:
 
-> install Moltbot â†’ point it at Ollama â†’ done.
+> install Moltbot -> point it at Ollama -> done.
 
 The reality took an hour of debugging across two machines and multiple moving parts.
 
-Here's what actually happenedâ€”so you don't have to repeat it.
+Here's what actually happened - so you don't have to repeat it.
 
 ---
 
@@ -39,15 +39,15 @@ Here's what actually happenedâ€”so you don't have to repeat it.
 
 I needed this to work **from Windows** for a simple reason: that's where my day-to-day life happens.
 
-For anyone wondering: if the local model only worked when I SSH'd into the server, it wouldn't become part of my routine. My "life admin" artifacts I want an assistant to help withâ€”those live on my Windows box or accessible from one (BitLocker encrypted connected drives). If the local model only worked when I SSH'd into the server, it wouldn't become part of my routine. The whole goal was: keep the sensitive stuff private **and** keep it usable where I actually do the work.
+For anyone wondering: if the local model only worked when I SSH'd into the server, it wouldn't become part of my routine. My "life admin" artifacts I want an assistant to help with - those live on my Windows box or accessible from one (BitLocker encrypted connected drives). If the local model only worked when I SSH'd into the server, it wouldn't become part of my routine. The whole goal was: keep the sensitive stuff private **and** keep it usable where I actually do the work.
 
-So the target workflow was straightforward: type a prompt on my Windows machine and have it answered by a 30B-ish model running on my serverâ€”private, fast-ish, and local-only.
+So the target workflow was straightforward: type a prompt on my Windows machine and have it answered by a 30B-ish model running on my server - private, fast-ish, and local-only.
 
 The architecture is straightforward:
 
 1. **Ollama** runs the model
 2. **Moltbot** provides the interface/agent runtime
-3. **Moltbot Gateway** bridges client â†” server across the network
+3. **Moltbot Gateway** bridges client <-> server across the network
 
 Three pieces, one goal.
 
@@ -61,7 +61,7 @@ Server setup went smoothly:
 - Pulled a model
 - Installed Moltbot
 - Started the gateway
-- Tested locallyâ€”it worked
+- Tested locally - it worked
 
 "This is easy," I thought.
 
@@ -75,7 +75,7 @@ I added the gateway URL to my config. Ran Moltbot. It tried connecting to **loca
 
 *Localhost?* I just told it to use my server's IP.
 
-Turns out Moltbot on Windows has **two config directories**â€”a legacy one and a current one. I was editing the wrong file. (Watch the error output: it usually tells you exactly which config path it's reading.) The error message actually told me which file it was reading, but I didn't notice until the third attempt.
+Turns out Moltbot on Windows has **two config directories** - a legacy one and a current one. I was editing the wrong file. (Watch the error output: it usually tells you exactly which config path it's reading.) The error message actually told me which file it was reading, but I didn't notice until the third attempt.
 
 **Lesson one:** Read the error messages. All of them.
 
@@ -113,7 +113,7 @@ What to do:
    - Side note: if you ever port-forward this, you're turning a private assistant into a public service. Don't.
 3. **Validate end-to-end connectivity from the Windows client** to the server's gateway address before troubleshooting anything else.
 
-Once you've established basic connectivity, the remaining issues tend to be configuration and pairingâ€”not networking.
+Once you've established basic connectivity, the remaining issues tend to be configuration and pairing - not networking.
 
 ## The Bouncer at the Door
 
@@ -123,7 +123,7 @@ Gateway running. Config correct. Mode set. Surely now?
 Error: pairing required
 ```
 
-Moltbot gateways don't let just anyone connect. There's a pairing systemâ€”devices request access, the server approves them.
+Moltbot gateways don't let just anyone connect. There's a pairing system - devices request access, the server approves them.
 
 Under the hood: pairing approval is a server-side control plane step, not something the client can self-complete. Security feature. Totally fair.
 
@@ -152,7 +152,7 @@ This was maddening because the whole point (for me) was: **local model, private 
 
 Here's what was happening: when the gateway connection fails, Moltbot tries to fall back to direct API access. That fallback also fails (no API key), generating a second error.
 
-The API key error was a symptom of gateway failure, not a problem to solve directlyâ€”basically a downstream domino after the gateway path breaks. Fix the gateway, and it disappears.
+The API key error was a symptom of gateway failure, not a problem to solve directly - basically a downstream domino after the gateway path breaks. Fix the gateway, and it disappears.
 
 **Lesson five:** Not every error message is the root cause. Some are just dominoes falling.
 
@@ -160,7 +160,7 @@ The API key error was a symptom of gateway failure, not a problem to solve direc
 
 ## The Moment It Worked
 
-After fixing all five issuesâ€”right config file, mode setting, gateway service, device pairing, ignoring the red herringâ€”I ran the command again.
+After fixing all five issues - right config file, mode setting, gateway service, device pairing, ignoring the red herring - I ran the command again.
 
 Response from my local model. On my Windows machine. Processed by my Ubuntu server. Over my local network.
 
@@ -198,13 +198,13 @@ If I were starting over, here's the checklist I'd follow:
 
 ## Was It Worth the Hour?
 
-Yesâ€”because it unlocked something specific: a reliable "private lane" for AI.
+Yes - because it unlocked something specific: a reliable "private lane" for AI.
 
 I still use cloud agents where they make sense. Local is just the lane I reserve for the stuff I don't want leaving home. But now I have a setup where I can confidently route personal workflows to a local model without wondering where that data ends up.
 
-The setup friction was realâ€”five distinct problems across two machinesâ€”but they're all solvable, and once solved, they tend to stay solved.
+The setup friction was real - five distinct problems across two machines - but they're all solvable, and once solved, they tend to stay solved.
 
-If you're considering running local AI: yes, it works. Yes, you'll hit weird config issues. And yes, you can debug it in an afternoonâ€”as long as you don't let config files gaslight you.
+If you're considering running local AI: yes, it works. Yes, you'll hit weird config issues. And yes, you can debug it in an afternoon - as long as you don't let config files gaslight you.
 
 ---
 
