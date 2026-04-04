@@ -1,5 +1,5 @@
 ---
-title: "I Used AI Agents to Audit My Tax Returns -- Here's What They Found"
+title: "I Used AI Agents to Audit My Taxes -- Here's What I Learned"
 date: 2026-03-31
 categories:
   - AI
@@ -12,7 +12,7 @@ excerpt: "I pointed AI agents at years of tax returns. They found issues, cleare
 classes: wide
 ---
 
-# I Used AI Agents to Audit My Tax Returns -- Here's What They Found
+# I Used AI Agents to Audit My Taxes -- Here's What I Learned
 
 I'm a technologist by trade, a data hoarder by habit, and a longtime expense-tracker who likes understanding where the money goes and how to make it work better. So when I used AI agents to analyze years of tax returns, I expected them to help me make smarter tax decisions in the future. Instead, they first helped me audit the past.
 
