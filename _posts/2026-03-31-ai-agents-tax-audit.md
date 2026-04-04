@@ -14,7 +14,7 @@ classes: wide
 
 # I Used AI Agents to Audit My Tax Returns -- Here's What They Found
 
-Iâ€™m a technologist by trade, a data hoarder by habit, and a longtime expense-tracker who likes understanding where the money goes and how to make it work better. So when I used AI agents to analyze years of tax returns, I expected them to help me make smarter tax decisions in the future. Instead, they first helped me audit the past.
+I'm a technologist by trade, a data hoarder by habit, and a longtime expense-tracker who likes understanding where the money goes and how to make it work better. So when I used AI agents to analyze years of tax returns, I expected them to help me make smarter tax decisions in the future. Instead, they first helped me audit the past.
 
 After analyzing years of returns side by side, the system surfaced three categories of value: one real filing issue that needed to be corrected, several items that improved confidence in my current tax prep once traced back properly, and a set of forward-looking actions that had real financial value but had not been fully implemented. That was the part I hadn't anticipated. Once you look across enough years, drift becomes obvious. What I thought would be a planning exercise became an audit first, because strategy is only as good as the foundation under it.
 
