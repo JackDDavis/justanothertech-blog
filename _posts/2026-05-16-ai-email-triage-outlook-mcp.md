@@ -1,5 +1,5 @@
 ---
-title: "Attention, Reclaimed -- AI Decluttering Agent"
+title: "Attention, Reclaimed -- Let AI Handle the Clutter"
 date: 2026-05-16
 categories:
   - AI
