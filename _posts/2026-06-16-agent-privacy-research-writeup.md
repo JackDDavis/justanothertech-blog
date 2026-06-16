@@ -16,7 +16,7 @@ classes: wide
 
 The practical privacy question for agent systems is whether an agent harness exposes reliable control points before model-visible context is assembled, and whether those control points are strong enough to support more than a binary allow-or-block policy. This is important because mixed-sensitivity workflows are common: useful and sensitive content are often intertwined, and a privacy layer that only knows how to stop work is not a usable answer.
 
-The repository I am releasing, `agent-privacy`, came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions -- allow, redact, handoff, and block -- because anything simpler proved either too weak or too disruptive.
+The repository I am releasing, [`agent-privacy`](https://github.com/JackDDavis/agent-privacy), came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions -- allow, redact, handoff, and block -- because anything simpler proved either too weak or too disruptive.
 
 ## Scope
 
@@ -82,7 +82,7 @@ That gap between synthetic success and live enforcement created a lot of early f
 
 For that reason, when using agent hooks, do not just evaluate "did the hook run?", but "what did the harness actually pass through next?" The project documentation distinguishes sharply between replacement, annotation, denial, and handoff rather than discussing them as if they were interchangeable forms of screening.
 
-## Design implications in `agent-privacy`
+## Design implications in [`agent-privacy`](https://github.com/JackDDavis/agent-privacy)
 
 The implementation that came out of those findings has three architectural properties that matter.
 
