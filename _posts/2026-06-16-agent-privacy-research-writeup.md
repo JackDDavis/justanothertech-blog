@@ -1,3 +1,8 @@
+---
+title: "Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow"
+classes: wide
+---
+
 # Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow
 
 The practical privacy question for agent systems is whether an agent harness exposes reliable control points before model-visible context is assembled, and whether those control points are strong enough to support more than a binary allow-or-block policy. This is important because mixed-sensitivity workflows are common: useful and sensitive content are often intertwined, and a privacy layer that only knows how to stop work is not a usable answer.
