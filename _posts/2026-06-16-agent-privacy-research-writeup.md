@@ -48,19 +48,15 @@ flowchart TD
     PreRunner --> BashGate{Pre-execution command gate}
 
     PromptPolicy --> PromptAllow[Allow]
-    PromptPolicy --> PromptRedact[Redact / add safe context]
-    PromptPolicy --> PromptChoice[Stop and ask user to allow, redact, or hand off]
+    PromptPolicy --> PromptHandoff[Handoff to private backend]
     PromptPolicy --> PromptBlock[Block]
 
-    PromptChoice --> PromptHandoff[Explicit handoff selected]
     PromptHandoff --> Router[route_handoff]
 
     OutputPolicy --> OutputAllow[Allow]
-    OutputPolicy --> OutputRedact[Replace output where supported]
-    OutputPolicy --> OutputHandoff[Hand off sensitive returned content]
+    OutputPolicy --> OutputRedact[Redact sensitive spans in output]
+    OutputPolicy --> OutputWarn[Prepend warning banner]
     OutputPolicy --> OutputBlock[Block]
-
-    OutputHandoff --> Router
 
     BashGate --> BashAllow[Allow command to run]
     BashGate --> BashBlock[Block / deny before execution]
