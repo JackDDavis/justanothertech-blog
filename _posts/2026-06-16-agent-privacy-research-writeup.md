@@ -26,6 +26,12 @@ The first large finding is that "supports hooks" is not a meaningful privacy cla
 
 Claude Code has the broadest hook surface. Copilot CLI exposes fewer major hook events, but some of its most important pre-tool behavior is operationally stronger because command-based `preToolUse` fails closed. Codex is the most constrained of the three for transformation-style privacy controls: denial is more trustworthy than substitution, and response shapes that imply rewriting or replacement do not necessarily become live enforcement behavior.
 
+| Harness | Hook Surface | Pre-tool Behavior | Post-tool Replacement | Key Constraint |
+|---|---|---|---|---|
+| Claude Code | Broadest | Fail-open unless exit code set correctly | Supported | Requires exit-code discipline to enforce |
+| Copilot CLI | Fewer events | Stronger -- command-based `preToolUse` fails closed | Limited annotation | Smaller hook surface overall |
+| Codex CLI | Most constrained | Limited | Not reliably enforced | Response shapes don't become live enforcement |
+
 This is more than naming drift. It changes what kind of privacy layer is even possible. A shared detector can classify the same content the same way across harnesses. A shared policy can decide that some result should be redacted before the model sees it. But if one harness supports genuine output replacement, another supports denial plus limited annotation, and a third only supports a subset of those controls reliably, then the privacy story is being determined by the harness contract, not by the detector alone.
 
 That is why the architecture in `agent-privacy` split into shared policy and thin harness-specific adapters. It was the only way to keep the implementation honest while the surfaces converge faster than their behavior does.
@@ -52,6 +58,13 @@ Handoff changes the role of the privacy layer from simple gating to routing. Ins
 
 This also narrows the project's privacy claim. The goal is not to make raw sensitive data disappear from every possible process. The goal is to keep that raw detail off the broader path when it does not need to be there.
 
+| Outcome | When applied | What happens | Tradeoff |
+|---|---|---|---|
+| Allow | Content is clean | Passes through unchanged | None |
+| Redact | Mixed-sensitivity, structure preservable | Sensitive spans removed, workflow continues | Some detail lost |
+| Handoff | Raw reasoning needed, too sensitive for public path | Sent to local model; safe summary returned | Bounded by local model capability |
+| Block | High-risk content or unsupported harness path | Content stopped | Work interrupted |
+
 ## Finding 4: selective routing needs both contextual filtering and deterministic coverage
 
 Another large finding is that the contextual filter service is often the more capable and scalable way to detect sensitive content in mixed real-world text, but it is still not sufficient as the only control layer or as the place every surface should be routed through. A service-based model can outperform brittle deterministic matching in many cases because it does not depend on anticipating every pattern in advance. At the same time, exhaustive routing would add cost, latency, and noise in places where the privacy value is low. That is part of why the project converged on CRUD-aware gating: prioritize the read and ingress paths where new model-visible information is actually entering the system, and avoid treating every operation as if it deserves the same level of inspection. That selective focus is also consistent with broader agent-trajectory evidence. In the Mini-SWE-Agent GPT-5.4 trajectory analysis paper (arXiv:2606.14066v1), reading and searching accounted for 56.2% of tool-use turns and 46.5% of the main agent's token share. That supports the narrower point that read-heavy surfaces absorb a disproportionate share of agent attention, which makes them high-value places to focus CRUD-aware privacy controls and model-visible risk reduction. In practice, deterministic controls remained necessary not as the primary detector, but as complementary coverage alongside the service.
@@ -59,6 +72,11 @@ Another large finding is that the contextual filter service is often the more ca
 In this project, I combined my research with OpenAI Privacy Filter - it is built to identify and mask PII spans in unstructured text, with a label taxonomy that covers categories like person, address, email, phone, date, URL, account number, and secret. That makes it much more useful for mixed real-world content than regex alone. It helps with partial addresses, names in context, mixed conversational text, and many of the cases where trying to enumerate every pattern manually becomes brittle or incomplete. Other models and frameworks can help with the same class of problem; this is the one I evaluated in this implementation. But deterministic controls still matter. In the current implementation they serve several narrower roles: cheap front-door triage before deeper routing, always-on handling for some high-confidence high-risk patterns, and degraded-mode protection when the richer service path is unavailable. Its model card is also explicit that it is a data-minimization aid rather than a blanket privacy guarantee.
 
 The architecture converged on a two-tier model with selective routing. Contextual filtering does much of the heavy lifting where mixed and ambiguous content is involved, but in this project that filtering still runs within the local environment through a local or LAN-hosted service. Deterministic screening remains in place as complementary coverage: it provides in-process triage, explicit handling for some known high-risk patterns, and degraded-mode protection when the filtering service is unavailable. CRUD-aware gating limits where deeper inspection is applied. That design was not just about accuracy. It was also about operational fit. A privacy layer that routes every surface through even a local service path is not a usable one; a layer with no secondary safeguards or degraded-mode protection is not a strong one.
+
+| Tier | Mechanism | Strengths | Role in this project |
+|---|---|---|---|
+| Contextual | Service-based filter (Privacy Filter) | Handles mixed/ambiguous text, names in context, partial addresses | Primary detection for complex real-world content |
+| Deterministic | Pattern matching / regex | Fast, always-on, no external call | Front-door triage, high-confidence patterns, degraded-mode fallback |
 
 ## Finding 5: live behavior matters more than isolated hook tests
 
