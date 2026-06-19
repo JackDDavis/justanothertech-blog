@@ -76,22 +76,6 @@ Post-tool interception matters because it sits on the transit leg between tool e
 
 That distinction became a design rule in the repository. `additionalContext`-style behavior is treated as explanatory only. Replacement fields are treated as the actual privacy control where the harness supports them. Where a harness does not support real replacement reliably, the safer posture is to block or downgrade to ensure the content has been contained.
 
-<div class="mermaid">
-flowchart TD
-    A[Prompt received] --> B[Check for manual prefix]
-    B -->|allow prefix| J[Forward original prompt]
-    B -->|redact prefix| I[Force redact path]
-    B -->|handoff prefix| H[Force private backend routing]
-    B -->|No prefix| C[Scan prompt locally]
-    C --> D{Policy result}
-    D -->|Clean| E[Continue unchanged]
-    D -->|Low-risk| F[Return redacted prompt context]
-    D -->|High-risk| G[Show choice to user\nallow / redact / handoff]
-    G --> K[Store prompt briefly]
-    K --> L[User replies with bare choice\nstored prompt reused]
-    L --> D
-</div>
-
 ## Finding 3: a usable privacy layer needs more than allow and block
 
 The next major finding is about outcome design rather than hook mechanics. The system needs more than a gate; it needs routing.
