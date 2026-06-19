@@ -82,7 +82,7 @@ The third is an audit-first posture. Every hook invocation records a decision tr
 
 The report data supports the argument that this layer is operating as a routing system rather than a blunt blocker.
 
-Across 6,343 recorded decisions, 4,456 were allows, 909 were blocks, 658 were redactions, and 320 were warnings. That mix matters. It shows that the project is not structured around denial as the default answer. Most traffic continues normally. At the same time, there is enough redaction activity to show that the system is preserving workflow value in cases that would otherwise collapse into either over-sharing or hard blocking.
+Across 6,343 recorded decisions, 4,456 (70%) were allows, 909 (14%) were blocks, 658 (10%) were redactions, and 320 (5%) were warnings. That mix matters. It shows that the project is not structured around denial as the default answer. Most traffic continues normally. At the same time, there is enough redaction activity to show that the system is preserving workflow value in cases that would otherwise collapse into either over-sharing or hard blocking.
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <div style="max-width: 480px; margin: 1.5rem auto;">
@@ -103,13 +103,22 @@ new Chart(document.getElementById('chart-outcomes'), {
   options: {
     plugins: {
       title: { display: true, text: 'Decision Outcome Distribution (n=6,343)', font: { size: 14 } },
-      legend: { position: 'bottom' }
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            var total = context.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+            var pct = ((context.parsed / total) * 100).toFixed(1);
+            return context.label + ': ' + context.parsed.toLocaleString() + ' (' + pct + '%)';
+          }
+        }
+      }
     }
   }
 });
 </script>
 
-The event distribution reinforces the earlier finding about interception points. The report records 3,567 post-bash events, 1,792 prompt events, and 977 pre-bash events. The busiest surface is the one closest to tool output re-entry, not the original user prompt. That is exactly what the broader argument would predict: once tools and shell commands are in play, the transit leg becomes the main place where mixed-sensitivity content has to be handled.
+The event distribution reinforces the earlier finding about interception points. The report records 3,567 (56%) post-bash events, 1,792 (28%) prompt events, and 977 (15%) pre-bash events. The busiest surface is the one closest to tool output re-entry, not the original user prompt. That is exactly what the broader argument would predict: once tools and shell commands are in play, the transit leg becomes the main place where mixed-sensitivity content has to be handled.
 
 <div style="max-width: 480px; margin: 1.5rem auto;">
   <canvas id="chart-surfaces"></canvas>
