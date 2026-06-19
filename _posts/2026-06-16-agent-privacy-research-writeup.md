@@ -26,6 +26,30 @@ I also used the repository's own operational artifacts as evidence. The current 
 
 I compared the live behavior of [Claude Code](https://code.claude.com/docs/en/hooks), [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-sdk/hooks/hooks-overview), and [Codex CLI](https://developers.openai.com/codex/hooks) within this system. The comparison focused on which interception points actually worked for privacy, what payload they exposed, whether they supported denial, replacement, annotation, or handoff, and how those behaviors changed under degradation or unsupported paths.
 
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'neutral'});</script>
+
+<div class="mermaid">
+flowchart TD
+    Event[Hook event fires] --> Type{Event type}
+    Type -->|User prompt| Prompt[Prompt flow]
+    Type -->|Tool output in transit| Tool[Tool-output flow]
+    Type -->|Command about to run| Pre[Pre-bash flow]
+
+    Prompt --> Policy[Privacy policy decision]
+    Tool --> Policy
+    Pre --> Policy
+
+    Policy --> Allow[Allow]
+    Policy --> Redact[Redact]
+    Policy --> Handoff[Handoff]
+    Policy --> Block[Block]
+
+    Handoff --> Router[Route to private backend]
+    Router --> Direct[Local inference model]
+    Router --> Agent[Local agent backend]
+</div>
+
 ## Finding 1: feature parity is overstated; the real unit is the harness contract
 
 The first large finding is that "supports hooks" is not a meaningful privacy claim by itself. Hooks are general-purpose harness features. They can be used for notifications, logging, workflow control, approvals, and many other behaviors that have nothing to do with privacy. I focused on which hooks became meaningful privacy control points, and how much control they actually provide once privacy is the use case. The hook-exposed intervention surfaces are prompt hooks, pre-tool hooks, and post-tool hooks. Permission-request events govern whether risky tool actions proceed and are distinct from interception or replacement of model-visible content.
@@ -52,6 +76,22 @@ Post-tool interception matters because it sits on the transit leg between tool e
 
 That distinction became a design rule in the repository. `additionalContext`-style behavior is treated as explanatory only. Replacement fields are treated as the actual privacy control where the harness supports them. Where a harness does not support real replacement reliably, the safer posture is to block or downgrade to ensure the content has been contained.
 
+<div class="mermaid">
+flowchart TD
+    A[Prompt received] --> B[Check for manual prefix]
+    B -->|allow prefix| J[Forward original prompt]
+    B -->|redact prefix| I[Force redact path]
+    B -->|handoff prefix| H[Force private backend routing]
+    B -->|No prefix| C[Scan prompt locally]
+    C --> D{Policy result}
+    D -->|Clean| E[Continue unchanged]
+    D -->|Low-risk| F[Return redacted prompt context]
+    D -->|High-risk| G[Show choice to user\nallow / redact / handoff]
+    G --> K[Store prompt briefly]
+    K --> L[User replies with bare choice\nstored prompt reused]
+    L --> D
+</div>
+
 ## Finding 3: a usable privacy layer needs more than allow and block
 
 The next major finding is about outcome design rather than hook mechanics. The system needs more than a gate; it needs routing.
@@ -70,6 +110,30 @@ This also narrows the project's privacy claim. The goal is not to make raw sensi
 | Redact | Mixed-sensitivity, structure preservable | Sensitive spans removed, workflow continues | Some detail lost |
 | Handoff | Raw reasoning needed, too sensitive for public path | Sent to local model; safe summary returned | Bounded by local model capability |
 | Block | High-risk content or unsupported harness path | Content stopped | Work interrupted |
+
+<div class="mermaid">
+sequenceDiagram
+    participant H as CLI Harness
+    participant R as Hook adapter
+    participant P as Privacy policy
+    participant B as Backend router
+    participant D as Local inference model
+    participant A as Local agent backend
+
+    H->>R: Event with sensitive content
+    R->>P: Classify and decide
+    P-->>R: Handoff required
+    R->>B: Route request
+    alt Summarization / extraction / file inspection
+        B->>D: Request shaped summary
+        D-->>B: Structured result
+    else Agentic / command-oriented work
+        B->>A: Structured handoff message
+        A-->>B: Private result
+    end
+    B-->>R: Raw backend text
+    R-->>H: Safe summary returned to main workflow
+</div>
 
 ## Finding 4: selective routing needs both contextual filtering and deterministic coverage
 
