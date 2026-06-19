@@ -2,7 +2,7 @@
 
 The practical privacy question for agent systems is whether an agent harness exposes reliable control points before model-visible context is assembled, and whether those control points are strong enough to support more than a binary allow-or-block policy. This is important because mixed-sensitivity workflows are common: useful and sensitive content are often intertwined, and a privacy layer that only knows how to stop work is not a usable answer.
 
-The repository I am releasing, `agent-privacy`, came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions -- allow, redact, handoff, and block -- because anything simpler proved either too weak or too disruptive.
+The repository I am releasing, `agent-privacy`, came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions — allow, redact, handoff, and block — because anything simpler proved either too weak or too disruptive.
 
 ## Scope
 
@@ -48,7 +48,7 @@ An allow-or-block design is too coarse for mixed-sensitivity work. If a document
 
 Redaction, however, is not the whole answer. Some tasks depend on the raw content for reasoning. A tax-style workflow, a financial record comparison, or a personally identifying support artifact may be too sensitive for the public path but too semantically dense to survive useful redaction. That is where handoff becomes necessary.
 
-Handoff changes the role of the privacy layer from simple gating to routing. Instead of treating "too sensitive for the default path" as equivalent to "stop the work," the system sends the raw content to a private local path and returns a narrower result that is safe enough for the broader workflow. In the current implementation, the hook process itself acts as the broker: it calls the local backend, waits for the response, and then returns a normal hook response containing only a minimal structured result -- summary, actionable details if needed, and a note about withheld categories when relevant -- rather than mirroring the sensitive source content back into the main workflow. In the current state of local models, this is most useful for summarization, extraction, and returning the specific information needed to continue the task. It is less effective for more complex reasoning, where a local handoff may still require manual takeover or a stronger frontier-model path. In that sense, handoff does not remove the capability gap between local and frontier models; it changes where sensitive reasoning happens and what can be safely returned from it.
+Handoff changes the role of the privacy layer from simple gating to routing. Instead of treating "too sensitive for the default path" as equivalent to "stop the work," the system sends the raw content to a private local path and returns a narrower result that is safe enough for the broader workflow. In the current implementation, the hook process itself acts as the broker: it calls the local backend, waits for the response, and then returns a normal hook response containing only a minimal structured result — summary, actionable details if needed, and a note about withheld categories when relevant — rather than mirroring the sensitive source content back into the main workflow. In the current state of local models, this is most useful for summarization, extraction, and returning the specific information needed to continue the task. It is less effective for more complex reasoning, where a local handoff may still require manual takeover or a stronger frontier-model path. In that sense, handoff does not remove the capability gap between local and frontier models; it changes where sensitive reasoning happens and what can be safely returned from it.
 
 This also narrows the project's privacy claim. The goal is not to make raw sensitive data disappear from every possible process. The goal is to keep that raw detail off the broader path when it does not need to be there.
 
@@ -84,17 +84,96 @@ The report data supports the argument that this layer is operating as a routing 
 
 Across 6,343 recorded decisions, 4,456 were allows, 909 were blocks, 658 were redactions, and 320 were warnings. That mix matters. It shows that the project is not structured around denial as the default answer. Most traffic continues normally. At the same time, there is enough redaction activity to show that the system is preserving workflow value in cases that would otherwise collapse into either over-sharing or hard blocking.
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<div style="max-width: 480px; margin: 1.5rem auto;">
+  <canvas id="chart-outcomes"></canvas>
+</div>
+<script>
+new Chart(document.getElementById('chart-outcomes'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Allow', 'Block', 'Redact', 'Warning'],
+    datasets: [{
+      data: [4456, 909, 658, 320],
+      backgroundColor: ['#4a90d9', '#c0392b', '#e67e22', '#95a5a6'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    plugins: {
+      title: { display: true, text: 'Decision Outcome Distribution (n=6,343)', font: { size: 14 } },
+      legend: { position: 'bottom' }
+    }
+  }
+});
+</script>
+
 The event distribution reinforces the earlier finding about interception points. The report records 3,567 post-bash events, 1,792 prompt events, and 977 pre-bash events. The busiest surface is the one closest to tool output re-entry, not the original user prompt. That is exactly what the broader argument would predict: once tools and shell commands are in play, the transit leg becomes the main place where mixed-sensitivity content has to be handled.
+
+<div style="max-width: 480px; margin: 1.5rem auto;">
+  <canvas id="chart-surfaces"></canvas>
+</div>
+<script>
+new Chart(document.getElementById('chart-surfaces'), {
+  type: 'bar',
+  data: {
+    labels: ['Post-tool', 'Prompt', 'Pre-tool'],
+    datasets: [{
+      label: 'Events',
+      data: [3567, 1792, 977],
+      backgroundColor: ['#2980b9', '#7f8c8d', '#95a5a6']
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      title: { display: true, text: 'Hook Event Distribution by Surface', font: { size: 14 } },
+      legend: { display: false }
+    },
+    scales: { x: { beginAtZero: true, title: { display: true, text: 'Events' } } }
+  }
+});
+</script>
 
 The harness-level numbers are also directionally useful. Copilot shows a higher block rate than Claude or Codex in the current data, while Codex shows comparatively less blocking and more reliance on warning or redaction-adjacent behavior. Those numbers should not be read as benchmark claims about the harnesses overall. They are observations about how the privacy layer behaves inside their respective contracts.
 
 Latency is where the operational cost becomes most visible. Prompt checks remain very fast, with a 2.8 ms p50. Pre-command checks remain similarly small at 6.6 ms p50. The median post-tool path is still workable at 40.8 ms, but the long tail is significant: post-tool p95 reaches 7.1 seconds. That long tail matters because a privacy layer that is too slow becomes easier to bypass socially even if it remains technically correct.
 
+<div style="max-width: 480px; margin: 1.5rem auto;">
+  <canvas id="chart-latency"></canvas>
+</div>
+<script>
+new Chart(document.getElementById('chart-latency'), {
+  type: 'bar',
+  data: {
+    labels: ['Prompt p50', 'Pre-cmd p50', 'Post-tool p50', 'Post-tool p95'],
+    datasets: [{
+      label: 'ms',
+      data: [2.8, 6.6, 40.8, 7100],
+      backgroundColor: ['#27ae60', '#27ae60', '#e67e22', '#c0392b']
+    }]
+  },
+  options: {
+    plugins: {
+      title: { display: true, text: 'Hook Latency by Surface (log scale)', font: { size: 14 } },
+      legend: { display: false }
+    },
+    scales: {
+      y: {
+        type: 'logarithmic',
+        title: { display: true, text: 'ms (log scale)' }
+      }
+    }
+  }
+});
+</script>
+
 ## Limits
 
 The findings above do not amount to total containment.
 
-Hooks do not expose the fully assembled outbound provider request. Process environment remains a separate category of risk from prompt text or tool output. Some secondary paths -- including subagent behavior and context compaction -- are weaker, later, or more harness-specific than a clean conceptual model would suggest. And even where interception exists, the harness may support annotation more strongly than substitution.
+Hooks do not expose the fully assembled outbound provider request. Process environment remains a separate category of risk from prompt text or tool output. Some secondary paths — including subagent behavior and context compaction — are weaker, later, or more harness-specific than a clean conceptual model would suggest. And even where interception exists, the harness may support annotation more strongly than substitution.
 
 That is why this project treats hooks as a strong layer in a defense-in-depth design rather than as the whole boundary. The system can reduce unnecessary exposure materially. It can make key control points visible and enforceable. It can keep a meaningful amount of mixed-sensitivity work on a safer path. But if the requirement is a hard trust boundary on every outbound payload, the solution space extends beyond hooks into proxies, isolation, and stricter execution designs.
 
