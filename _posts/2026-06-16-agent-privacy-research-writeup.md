@@ -31,23 +31,47 @@ I compared the live behavior of [Claude Code](https://code.claude.com/docs/en/ho
 
 <div class="mermaid">
 flowchart TD
-    Event[Hook event fires] --> Type{Event type}
-    Type -->|User prompt| Prompt[Prompt flow]
-    Type -->|Tool output in transit| Tool[Tool-output flow]
-    Type -->|Command about to run| Pre[Pre-bash flow]
+    UserPrompt[User submits prompt] --> PromptEvent[Host fires prompt hook]
+    AgentCommand[Agent proposes Bash/tool command] --> PreEvent[Host fires pre-tool / pre-bash hook]
+    ToolOutput[Tool output returns toward model] --> PostEvent[Host fires post-tool hook]
 
-    Prompt --> Policy[Privacy policy decision]
-    Tool --> Policy
-    Pre --> Policy
+    PromptEvent --> PromptAdapter[Prompt adapter]
+    PreEvent --> PreAdapter[Pre-bash adapter]
+    PostEvent --> PostAdapter[Tool-output adapter]
 
-    Policy --> Allow[Allow]
-    Policy --> Redact[Redact]
-    Policy --> Handoff[Handoff]
-    Policy --> Block[Block]
+    PromptAdapter --> PromptRunner[handle_prompt]
+    PreAdapter --> PreRunner[handle_pre_bash]
+    PostAdapter --> ToolRunner[handle_tool_output]
 
-    Handoff --> Router[Route to private backend]
-    Router --> Direct[Local inference model]
-    Router --> Agent[Local agent backend]
+    PromptRunner --> PromptPolicy{Prompt policy}
+    ToolRunner --> OutputPolicy{Tool-output policy}
+    PreRunner --> BashGate{Pre-execution command gate}
+
+    PromptPolicy --> PromptAllow[Allow]
+    PromptPolicy --> PromptRedact[Redact / add safe context]
+    PromptPolicy --> PromptChoice[Stop and ask user to allow, redact, or hand off]
+    PromptPolicy --> PromptBlock[Block]
+
+    PromptChoice --> PromptHandoff[Explicit handoff selected]
+    PromptHandoff --> Router[route_handoff]
+
+    OutputPolicy --> OutputAllow[Allow]
+    OutputPolicy --> OutputRedact[Replace output where supported]
+    OutputPolicy --> OutputHandoff[Hand off sensitive returned content]
+    OutputPolicy --> OutputBlock[Block]
+
+    OutputHandoff --> Router
+
+    BashGate --> BashAllow[Allow command to run]
+    BashGate --> BashBlock[Block / deny before execution]
+
+    Router --> RouteDecision{Private route}
+    RouteDecision --> Direct[Local inference backend]
+    RouteDecision --> LocalAgent[Local agent backend]
+
+    Direct --> SafeResult[Minimal safe result]
+    LocalAgent --> SafeResult[Minimal safe result]
+    SafeResult --> HostReturn[Return safe payload to host]
 </div>
 
 ## Finding 1: feature parity is overstated; the real unit is the harness contract
