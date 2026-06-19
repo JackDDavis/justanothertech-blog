@@ -1,22 +1,8 @@
----
-title: "Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow"
-date: 2026-06-16
-categories:
-  - AI
-  - Security
-tags:
-  - privacy
-  - agents
-  - pii
-  - claude-code
-  - security
-excerpt: "An exploration of privacy controls for CLI-style agent harnesses -- where sensitive data can be intercepted before it becomes model-visible context, and what kinds of control those interception points actually support in live behavior."
-classes: wide
----
+# Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow
 
 The practical privacy question for agent systems is whether an agent harness exposes reliable control points before model-visible context is assembled, and whether those control points are strong enough to support more than a binary allow-or-block policy. This is important because mixed-sensitivity workflows are common: useful and sensitive content are often intertwined, and a privacy layer that only knows how to stop work is not a usable answer.
 
-The repository I am releasing, [`agent-privacy`](https://github.com/JackDDavis/agent-privacy), came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions -- allow, redact, handoff, and block -- because anything simpler proved either too weak or too disruptive.
+The repository I am releasing, `agent-privacy`, came out of exploring that problem across multiple agent harnesses. Privacy can be improved materially when the system treats information flow as the primary problem, models harness differences explicitly, and routes content through more than one outcome. The design that emerged from that work is built around four actions -- allow, redact, handoff, and block -- because anything simpler proved either too weak or too disruptive.
 
 ## Scope
 
@@ -36,7 +22,7 @@ I compared the live behavior of Claude Code, GitHub Copilot CLI, and Codex CLI w
 
 ## Finding 1: feature parity is overstated; the real unit is the harness contract
 
-The first large finding is that "supports hooks" is not a meaningful privacy claim by itself. Hooks are general-purpose harness features. They can be used for notifications, logging, workflow control, approvals, and many other behaviors that have nothing to do with privacy. I focused on which hooks became meaningful privacy control points, and how much control they actually provide once privacy is the use case. Across the three harnesses examined, there are signs of emerging industry-standard hook surfaces -- prompt hooks, pre-tool hooks, post-tool hooks, permission hooks -- but the implementations remain uneven enough that their privacy-relevant behavior differs substantially.
+The first large finding is that "supports hooks" is not a meaningful privacy claim by itself. Hooks are general-purpose harness features. They can be used for notifications, logging, workflow control, approvals, and many other behaviors that have nothing to do with privacy. I focused on which hooks became meaningful privacy control points, and how much control they actually provide once privacy is the use case. The hook-exposed intervention surfaces are prompt hooks, pre-tool hooks, and post-tool hooks. Permission-request events govern whether risky tool actions proceed and are distinct from interception or replacement of model-visible content.
 
 Claude Code has the broadest hook surface. Copilot CLI exposes fewer major hook events, but some of its most important pre-tool behavior is operationally stronger because command-based `preToolUse` fails closed. Codex is the most constrained of the three for transformation-style privacy controls: denial is more trustworthy than substitution, and response shapes that imply rewriting or replacement do not necessarily become live enforcement behavior.
 
@@ -82,7 +68,7 @@ That gap between synthetic success and live enforcement created a lot of early f
 
 For that reason, when using agent hooks, do not just evaluate "did the hook run?", but "what did the harness actually pass through next?" The project documentation distinguishes sharply between replacement, annotation, denial, and handoff rather than discussing them as if they were interchangeable forms of screening.
 
-## Design implications in [`agent-privacy`](https://github.com/JackDDavis/agent-privacy)
+## Design implications in `agent-privacy`
 
 The implementation that came out of those findings has three architectural properties that matter.
 
