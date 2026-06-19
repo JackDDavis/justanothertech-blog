@@ -136,7 +136,7 @@ new Chart(document.getElementById('chart-surfaces'), {
 });
 </script>
 
-The harness-level numbers are also directionally useful. Copilot shows a higher block rate than Claude or Codex in the current data, while Codex shows comparatively less blocking and more reliance on warning or redaction-adjacent behavior. Those numbers should not be read as benchmark claims about the harnesses overall. They are observations about how the privacy layer behaves inside their respective contracts.
+The harness-level numbers are also directionally useful. Copilot shows a higher block rate than Claude or Codex in the current data, while Codex shows comparatively less blocking and more reliance on warning or redaction-adjacent behavior. Those numbers should not be read as benchmark claims about the harnesses overall. They partly reflect which harness was in active use during the report window -- a harness used more frequently will simply accumulate more events. They are observations about how the privacy layer behaves inside their respective contracts, not a controlled comparison of harness behavior under equal workloads.
 
 Latency is where the operational cost becomes most visible. Prompt checks remain very fast, with a 2.8 ms p50. Pre-command checks remain similarly small at 6.6 ms p50. The median post-tool path is still workable at 40.8 ms, but the long tail is significant: post-tool p95 reaches 7.1 seconds. That long tail matters because a privacy layer that is too slow becomes easier to bypass socially even if it remains technically correct.
 
