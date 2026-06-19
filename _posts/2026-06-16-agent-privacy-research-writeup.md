@@ -35,17 +35,9 @@ flowchart TD
     AgentCommand[Agent proposes Bash/tool command] --> PreEvent[Host fires pre-tool / pre-bash hook]
     ToolOutput[Tool output returns toward model] --> PostEvent[Host fires post-tool hook]
 
-    PromptEvent --> PromptAdapter[Prompt adapter]
-    PreEvent --> PreAdapter[Pre-bash adapter]
-    PostEvent --> PostAdapter[Tool-output adapter]
-
-    PromptAdapter --> PromptRunner[handle_prompt]
-    PreAdapter --> PreRunner[handle_pre_bash]
-    PostAdapter --> ToolRunner[handle_tool_output]
-
-    PromptRunner --> PromptPolicy{Prompt policy}
-    ToolRunner --> OutputPolicy{Tool-output policy}
-    PreRunner --> BashGate{Pre-execution command gate}
+    PromptEvent --> PromptPolicy{Prompt policy}
+    PostEvent --> OutputPolicy{Tool-output policy}
+    PreEvent --> BashGate{Pre-execution command gate}
 
     PromptPolicy --> PromptAllow[Allow]
     PromptPolicy --> PromptRedact[Redact / add safe context]
