@@ -29,43 +29,6 @@ I compared the live behavior of [Claude Code](https://code.claude.com/docs/en/ho
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad: true, theme: 'neutral'});</script>
 
-<div class="mermaid">
-flowchart TD
-    UserPrompt[User submits prompt] --> PromptEvent[Host fires prompt hook]
-    AgentCommand[Agent proposes Bash/tool command] --> PreEvent[Host fires pre-tool / pre-bash hook]
-    ToolOutput[Tool output returns toward model] --> PostEvent[Host fires post-tool hook]
-
-    PromptEvent --> PromptPolicy{Prompt policy}
-    PostEvent --> OutputPolicy{Tool-output policy}
-    PreEvent --> BashGate{Pre-execution command gate}
-
-    PromptPolicy --> PromptAllow[Allow]
-    PromptPolicy --> PromptRedact[Redact / add safe context]
-    PromptPolicy --> PromptChoice[Stop and ask user to allow, redact, or hand off]
-    PromptPolicy --> PromptBlock[Block]
-
-    PromptChoice --> PromptHandoff[Explicit handoff selected]
-    PromptHandoff --> Router[route_handoff]
-
-    OutputPolicy --> OutputAllow[Allow]
-    OutputPolicy --> OutputRedact[Redact sensitive spans in output]
-    OutputPolicy --> OutputWarn[Prepend warning banner]
-    OutputPolicy --> OutputHandoff[Hand off sensitive returned content]
-    OutputPolicy --> OutputBlock[Block]
-
-    OutputHandoff --> Router
-
-    BashGate --> BashAllow[Allow command to run]
-    BashGate --> BashBlock[Block / deny before execution]
-
-    Router --> RouteDecision{Private route}
-    RouteDecision --> Direct[Local inference backend]
-    RouteDecision --> LocalAgent[Local agent backend]
-
-    Direct --> SafeResult[Minimal safe result]
-    LocalAgent --> SafeResult[Minimal safe result]
-    SafeResult --> HostReturn[Return safe payload to host]
-</div>
 
 ## Finding 1: feature parity is overstated; the real unit is the harness contract
 
