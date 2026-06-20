@@ -2,6 +2,9 @@
 title: "Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow"
 classes: wide
 author_profile: false
+categories:
+  - ai
+  - security
 ---
 
 # Maintaining Privacy With Agents: What Actually Works When Sensitive Data Is Part of the Workflow
